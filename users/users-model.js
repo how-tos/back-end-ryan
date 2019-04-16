@@ -1,8 +1,6 @@
 const db = require('../data/dbConfig');
 const mongoose = require('mongoose');
 
-module.exports = { addUser, deleteUser, getUsers };
-
 const userSchema = mongoose.Schema({
   // mongoose automatically adds the `_id` field
   username: { type: String, required: true, trim: true, unique: true },
@@ -47,14 +45,16 @@ const fakeUserOne = new User({
  * @param {object} user - user object
  */
 function addUser(user) {
-  return User.create(
-    user
-    //   , function(error, newUser) {
-    //   if (error) return console.error(error);
-    //   console.log('newUser: ', newUser);
-    //   return newUser;
-    // }
-  );
+  return User.init()
+    .then(() => User.create(user))
+    .then(newUser => {
+      delete newUser._doc.passHash;
+      delete newUser._doc.__v;
+      return newUser;
+    })
+    .catch(error => {
+      throw error; // typically a unique-constraint error
+    });
 }
 
 function getUsers() {
@@ -63,6 +63,10 @@ function getUsers() {
 
 function deleteUser(id) {
   return User.deleteOne({ _id: id });
+}
+
+function dropUsersTable() {
+  return db.collection('users').drop();
 }
 
 // userModel.insertMany([fakeUserOne]).then(result => {
@@ -76,3 +80,10 @@ function deleteUser(id) {
 //     .then(() => mongoose.connection.close())
 //     .catch(error => console.error(error));
 // });
+
+module.exports = {
+  addUser,
+  deleteUser,
+  dropUsersTable,
+  getUsers
+};
