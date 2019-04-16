@@ -41,7 +41,7 @@ Log into the backend.
   axios.post(
     'https://www.example.com/api/how-tos/',
     newHowTo,
-    { headers: {Authorization: localStorage.getItem('token')}
+    { headers: { Authorization: localStorage.getItem('token') } }
   )
   .then(response => ...)
   ```
