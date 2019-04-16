@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
-const userModel = require('../users/users-model').User;
-const fakeUserOne = require('../users/users-model').fakeUserOne;
+const userModel = require('../api/users/users-model').User;
+const fakeUserOne = require('../api/users/users-model').fakeUserOne;
 
 // The URI is like a URL, but for the remote database
 const uri = process.env.MONGODB_URI;
