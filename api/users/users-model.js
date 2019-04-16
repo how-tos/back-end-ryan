@@ -21,8 +21,8 @@ const User = mongoose.model('users', userSchema);
 module.exports = {
   addUser,
   deleteUser,
-  dropUsersTable,
   getUsers,
+  getByUsername,
   updateUser
 };
 
@@ -48,8 +48,8 @@ function deleteUser(id) {
   return User.deleteOne({ _id: id });
 }
 
-function dropUsersTable() {
-  return db.collection('users').drop();
+function getByUsername(username) {
+  return User.findOne({ username });
 }
 
 function getUsers() {
@@ -65,5 +65,12 @@ function updateUser(id, changes) {
       }
       return doc.save();
     })
-    .catch(error => console.error(error));
+    .then(newUser => {
+      delete newUser._doc.passHash;
+      delete newUser._doc.__v;
+      return newUser;
+    })
+    .catch(error => {
+      throw error;
+    });
 }

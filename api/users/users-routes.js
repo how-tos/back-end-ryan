@@ -3,62 +3,7 @@ const router = require('express').Router();
 
 const Users = require('./users-model');
 
-function handleServerError(error, res) {
-  console.error(error.message);
-  return res
-    .status(500)
-    .json({ message: 'The request could not be completed.', error: error });
-}
-
-router.post('/', (req, res) => {
-  if (
-    !req.body.firstName ||
-    !req.body.password ||
-    !req.body.lastName ||
-    !req.body.username
-  ) {
-    return res.status(400).json({
-      message:
-        'Please include `firstName`, `password`, `lastName`, and `username` properties.',
-      example: {
-        firstName: 'Barney',
-        password: 'YabbaDabbaDo!',
-        lastName: 'Rubble',
-        username: 'BarnDawgBCE'
-      },
-      requestProperties: [
-        { propertyName: 'firstName', required: true, location: 'request body' },
-        { propertyName: 'password', required: true, location: 'request body' },
-        { propertyName: 'lastName', required: true, location: 'request body' },
-        { propertyName: 'username', required: true, location: 'request body' }
-      ]
-    });
-  }
-
-  // hash that password
-  const hashedPass = bcrypt.hashSync(req.body.password, 12);
-
-  const hashedUser = {
-    name: {
-      first: req.body.firstName,
-      last: req.body.lastName
-    },
-    passHash: hashedPass,
-    username: req.body.username
-  };
-
-  Users.addUser(hashedUser)
-    .then(newUser => {
-      res.status(200).json(newUser);
-    })
-    .catch(error => {
-      if (error.code === 11000) {
-        return res.status(400).json({ Error: 'Username already in use.' });
-      } else {
-        handleServerError(error, res);
-      }
-    });
-});
+const handleServerError = require('../api-actions').handleServerError;
 
 router.get('/', (req, res) => {
   Users.getUsers()
@@ -119,7 +64,15 @@ router.put('/:id', (req, res) => {
       }
       return res.status(201).json(result);
     })
-    .catch(error => handleServerError(error, res));
+    .catch(error => {
+      if (error.code == 11000) {
+        return res
+          .status(400)
+          .json({ message: 'Username already in use.', errorCode: error.code });
+      } else {
+        handleServerError(error, res);
+      }
+    });
 });
 
 router.delete('/:id', (req, res) => {
@@ -130,7 +83,7 @@ router.delete('/:id', (req, res) => {
       }
       res.status(204).end();
     })
-    .catch(error => handleServerError(res, error));
+    .catch(error => handleServerError(error, res));
 });
 
 module.exports = router;
