@@ -11,22 +11,25 @@ const userSchema = mongoose.Schema({
   passHash: { type: String, required: true }
 });
 
-// Take the `userSchema` and create a `model`
+// Take the `userSchema` and create the `model`
 const User = mongoose.model('users', userSchema);
 
+//
 // *** DATABASE HELPER FUNCTIONS *** //
+//
 
 module.exports = {
   addUser,
   deleteUser,
   dropUsersTable,
-  getUsers
+  getUsers,
+  updateUser
 };
 
 /**
  * Takes `user` object, adds to DB, and returns persisted object if successful.
  * `user` should have `firstName`, `lastName`, `passHash`, and `username` properties
- * @param {object} user - user object
+ * @param {Object} user - user object
  */
 function addUser(user) {
   return User.init()
@@ -41,14 +44,26 @@ function addUser(user) {
     });
 }
 
-function getUsers() {
-  return User.find().select('username _id name');
-}
-
 function deleteUser(id) {
   return User.deleteOne({ _id: id });
 }
 
 function dropUsersTable() {
   return db.collection('users').drop();
+}
+
+function getUsers() {
+  return User.find().select('username _id name');
+}
+
+function updateUser(id, changes) {
+  return User.findById(id)
+    .then(doc => {
+      if (!doc) return null;
+      for (let key of Object.keys(changes)) {
+        doc[key] = changes[key];
+      }
+      return doc.save();
+    })
+    .catch(error => console.error(error));
 }

@@ -25,7 +25,13 @@ router.post('/', (req, res) => {
         password: 'YabbaDabbaDo!',
         lastName: 'Rubble',
         username: 'BarnDawgBCE'
-      }
+      },
+      requestProperties: [
+        { propertyName: 'firstName', required: true, location: 'request body' },
+        { propertyName: 'password', required: true, location: 'request body' },
+        { propertyName: 'lastName', required: true, location: 'request body' },
+        { propertyName: 'username', required: true, location: 'request body' }
+      ]
     });
   }
 
@@ -62,10 +68,58 @@ router.get('/', (req, res) => {
     .catch(error => handleServerError(res, error));
 });
 
-router.get('/drop', (req, res) => {
-  Users.dropUsersTable().then(result => {
-    res.status(204).end();
-  });
+// router.get('/drop', (req, res) => {
+//   Users.dropUsersTable().then(result => {
+//     res.status(204).end();
+//   });
+// });
+
+router.put('/:id', (req, res) => {
+  for (let key of Object.keys(req.body)) {
+    if (!['firstName', 'password', 'lastName', 'username'].includes(key)) {
+      return res.status(400).json({
+        message:
+          'Updateable properties: `firstName`, `password`, `lastName`, and `username`',
+        example: {
+          firstName: 'Barney',
+          lastName: 'Rubble',
+          username: 'BarnDawgBCE'
+        },
+        requestProperties: [
+          {
+            propertyName: 'firstName',
+            required: false,
+            location: 'request body'
+          },
+          { propertyName: 'id', required: true, location: '/api/users/:id' },
+          {
+            propertyName: 'password',
+            required: false,
+            location: 'request body'
+          },
+          {
+            propertyName: 'lastName',
+            required: false,
+            location: 'request body'
+          },
+          {
+            propertyName: 'username',
+            required: false,
+            location: 'request body'
+          }
+        ]
+      });
+    }
+  }
+  Users.updateUser(req.params.id, req.body)
+    .then(result => {
+      console.log('updateUser result: ', result);
+      if (!result) {
+        return res.status(404).json({ message: 'No record found.' });
+      }
+      return res.status(201).json(result);
+    })
+    .catch(error => handleServerError(error, res));
 });
 
 router.delete('/:id', (req, res) => {
