@@ -1,4 +1,3 @@
-const bcrypt = require('bcryptjs');
 const router = require('express').Router();
 
 const Users = require('./users-model');
@@ -24,7 +23,7 @@ router.put('/:id', (req, res) => {
     if (!['firstName', 'password', 'lastName', 'username'].includes(key)) {
       return res.status(400).json({
         message:
-          'Updateable properties: `firstName`, `password`, `lastName`, and `username`',
+          'Invalid Request',
         example: {
           firstName: 'Barney',
           lastName: 'Rubble',

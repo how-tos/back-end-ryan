@@ -1,18 +1,18 @@
-// const db = require('../../data/dbConfig');
 const mongoose = require('mongoose');
 
-const userSchema = mongoose.Schema({
+const userSchema = new mongoose.Schema({
   // mongoose automatically adds the `_id` field
-  username: { type: String, required: true, trim: true, unique: true },
+  favoriteList: [{ type: mongoose.Schema.Types.ObjectId, ref: 'HowTo' }],
   name: {
     first: { type: String, trim: true },
     last: { type: String, trim: true }
   },
-  passHash: { type: String, required: true }
+  passHash: { type: String, required: true },
+  username: { type: String, required: true, trim: true, unique: true }
 });
 
 // Take the `userSchema` and create the `model`
-const User = mongoose.model('users', userSchema);
+const User = mongoose.model('User', userSchema, 'users');
 
 //
 // *** DATABASE HELPER FUNCTIONS *** //
@@ -38,6 +38,7 @@ function addUser(user) {
   return User.init()
     .then(() => User.create(user))
     .then(newUser => {
+      console.log(newUser);
       delete newUser._doc.passHash;
       delete newUser._doc.__v;
       return newUser;
@@ -56,22 +57,37 @@ function getByUsername(username) {
 }
 
 function getUsers() {
-  return User.find().select('username _id name');
+  return User.find().select('favoriteList username _id name');
 }
 
-async function toggleFavorite(userID, howToID) {
-  try {
-    const user = await User.findById(userID);
-    const favIndex = await user.favoriteList.id(howToID);
-    if (!favIndex) {
-      user.favoriteList.pull(howToID);
-    } else {
-      user.favoriteList.push(howToID);
+async function toggleFavorite(userID, howToID, isFavorite) {
+  return new Promise(async function(resolve, reject) {
+    try {
+      let result = {};
+      const user = await User.findById(userID);
+      if (!user) resolve(null);
+      const favIndex = await user.favoriteList.indexOf(howToID);
+      console.log('favIndex: ', favIndex);
+      // test the above code first
+      if (favIndex >= 0 && !isFavorite) {
+        user.favoriteList.pull(howToID);
+        result.favoriteChange = 'removed';
+        const newUser = await user.save();
+        result.favoriteList = newUser.favoriteList;
+      } else if (favIndex < 0 && isFavorite) {
+        user.favoriteList.push(howToID);
+        const newUser = await user.save();
+        result.favoriteList = newUser.favoriteList;
+        result.favoriteChange = 'added';
+      } else {
+        result.favoriteChange = null;
+      }
+      resolve(result);
+    } catch (error) {
+      console.error('toggleFavorite error: ', error);
+      reject(error);
     }
-    return user.favoriteList;
-  } catch (error) {
-    throw error;
-  }
+  });
 }
 
 function updateUser(id, changes) {

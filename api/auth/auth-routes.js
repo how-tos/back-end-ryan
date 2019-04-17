@@ -38,6 +38,7 @@ router.post('/register', (req, res) => {
   const hashedPass = bcrypt.hashSync(req.body.password, 12);
 
   const hashedUser = {
+    favoriteList: [],
     name: {
       first: req.body.firstName,
       last: req.body.lastName

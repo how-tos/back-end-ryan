@@ -8,29 +8,34 @@ const stepSchema = mongoose.Schema({
 
 const howToSchema = mongoose.Schema({
   // mongoose automatically adds the `_id` field
-  author: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-  date: Date,
-  favoriteCount: Number,
+  author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  created: Date,
+  favoriteCount: { type: Number, default: 0,  },
   steps: [stepSchema],
   tags: [String],
   title: { type: String, required: true }
 });
 
-const HowTo = mongoose.model('how-to', howToSchema);
+const HowTo = mongoose.model('howto', howToSchema);
 
 //
 // *** DATABASE HELPER FUNCTIONS *** //
 //
 
+const toggleUserFavorite = require('../users/users-model').toggleFavorite;
+
 module.exports = {
   addHowTo,
-  editHowTo,
   deleteHowto,
-  getHowTo
+  editHowTo,
+  favoriteHowTo,
+  getHowToByFilter,
+  getHowToByID
 };
 
 function addHowTo(howTo) {
   return HowTo.create(howTo);
+  // What happens if the `author` isn't a valid _id?
 }
 
 function editHowTo(id, changes) {
@@ -51,14 +56,54 @@ function deleteHowto(id) {
   return HowTo.deleteOne({ _id: id });
 }
 
-function getHowTo(filter) {
+function getHowToByFilter(filter) {
   return HowTo.find(filter);
 }
 
-// UNFINISHED
-// function favoriteHowTo(userID, howToID) {
-//   HowTo.findById()
-// }
+function getHowToByID(id) {
+  return HowTo.findById(id).populate('author');
+}
 
-// favorite how to
+async function favoriteHowTo(userID, howToID, isFavorite) {
+  return new Promise(async function(resolve, reject) {
+    try {
+      const howTo = await HowTo.findById(howToID);
+      if (!howTo) resolve({ missing: 'how to', code: 404 });
+      
+      const userToggle = await toggleUserFavorite(userID, howToID, isFavorite);
+      if (!userToggle) resolve({ missing: 'user', code: 404 });
+      
+      switch (userToggle.favoriteChange) {
+        case 'added':
+          console.log('case added');
+          howTo.favoriteCount++;
+          const savedHowToAdded = await howTo.save();
+          resolve({
+            favoriteChange: userToggle.favoriteChange,
+            favoriteCount: savedHowToAdded.favoriteCount
+          });
+          break;
+        case 'removed':
+          console.log('case removed');
+          howTo.favoriteCount--;
+          const savedHowToRemoved = await howTo.save();
+          resolve({
+            favoriteChange: userToggle.favoriteChange,
+            favoriteCount: savedHowToRemoved.favoriteCount
+          });
+          break;
+        default:
+          console.log('default case');
+          resolve({
+            favoriteChange: userToggle.favoriteChange,
+            favoriteCount: howTo.favoriteCount
+          });
+      }
+    } catch (error) {
+      console.error('favoriteHowTo error: ', error);
+      reject(error);
+    }
+  });
+}
+
 // CRUD for steps, too
