@@ -23,7 +23,10 @@ module.exports = {
   deleteUser,
   getUsers,
   getByUsername,
-  updateUser
+  toggleFavorite,
+  updateUser,
+  User,
+  userSchema
 };
 
 /**
@@ -54,6 +57,21 @@ function getByUsername(username) {
 
 function getUsers() {
   return User.find().select('username _id name');
+}
+
+async function toggleFavorite(userID, howToID) {
+  try {
+    const user = await User.findById(userID);
+    const favIndex = await user.favoriteList.id(howToID);
+    if (!favIndex) {
+      user.favoriteList.pull(howToID);
+    } else {
+      user.favoriteList.push(howToID);
+    }
+    return user.favoriteList;
+  } catch (error) {
+    throw error;
+  }
 }
 
 function updateUser(id, changes) {
