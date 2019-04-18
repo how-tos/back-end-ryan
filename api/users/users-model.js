@@ -21,6 +21,7 @@ const User = mongoose.model('User', userSchema, 'users');
 module.exports = {
   addUser,
   deleteUser,
+  getUserById,
   getUsers,
   getByUsername,
   toggleFavorite,
@@ -50,6 +51,10 @@ function addUser(user) {
 
 function deleteUser(id) {
   return User.deleteOne({ _id: id });
+}
+
+function getUserById(id) {
+  return User.findById(id).select('favoriteList username _id name');
 }
 
 function getByUsername(username) {
