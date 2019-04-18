@@ -1,25 +1,32 @@
 const router = require('express').Router();
 
 const HowTos = require('./how-to-model');
+const imagesRouter = require('../images/images-router');
 const stepsRouter = require('../steps/steps-router');
 
 const handleServerError = require('../api-actions').handleServerError;
 
 router.post('/', (req, res) => {
-  if (!req.body.authorID || !req.body.title) {
-    return res.status(400).json({
-      message: 'Invalid Request',
-      example: {
-        authorID: 'aw357-ahf79fay',
-        tags: ['Dinosaurs', 'Mining'],
-        title: 'How to Work with Dinosaurs to Mine at the Quarry'
-      },
-      requestProperties: [
-        { propertyName: 'authorID', location: 'request body', required: true },
-        { propertyName: 'tags', location: 'request body', required: false },
-        { propertyName: 'title', location: 'request body', required: true }
-      ]
-    });
+  for (let key of Object.keys(req.body)) {
+    if (!['authorID', 'tags', 'title'].includes(key)) {
+      return res.status(400).json({
+        message: 'Invalid Request',
+        example: {
+          authorID: 'aw357-ahf79fay',
+          tags: ['Dinosaurs', 'Mining'],
+          title: 'How to Work with Dinosaurs to Mine at the Quarry'
+        },
+        requestProperties: [
+          {
+            propertyName: 'authorID',
+            location: 'request body',
+            required: true
+          },
+          { propertyName: 'tags', location: 'request body', required: false },
+          { propertyName: 'title', location: 'request body', required: false }
+        ]
+      });
+    }
   }
   const newHowTo = {
     author: req.body.authorID,
@@ -31,7 +38,9 @@ router.post('/', (req, res) => {
     .then(savedHowTo => res.status(201).json(savedHowTo))
     .catch(error => {
       if (error.errors.author.name === 'CastError') {
-        return res.status(404).json({ message: 'No record found for `authorID`.' });
+        return res
+          .status(404)
+          .json({ message: 'No record found for `authorID`.' });
       } else {
         handleServerError(error, res);
       }
@@ -84,7 +93,9 @@ router.put('/:howToId', (req, res) => {
       if (error.name === 'CastError') {
         return res.status(404).json({ message: 'No record found.' });
       } else if (error.errors.author.name === 'CastError') {
-        return res.status(404).json({ message: 'No record found for `authorID`.' });
+        return res
+          .status(404)
+          .json({ message: 'No record found for `authorID`.' });
       } else {
         return handleServerError(error, res);
       }
@@ -137,6 +148,8 @@ router.post('/:howToId/favorite', (req, res) => {
     .catch(error => handleServerError(error, res));
 });
 
+// Forward images
+router.use('/:howToId/image', imagesRouter);
 // Forward steps
 router.use('/:howToId/steps', stepsRouter);
 

@@ -11,7 +11,6 @@
 * **steps** – An `Array` of Steps, which are a separate database entity and managed through the `/api/how-to/:id/steps` endpoints
 * **tags** – An `Array` of `String`s
 * **title** – A `String` that is the title of the How To
-  * Required: `true`
 
 
 ### Add How To – `POST /api/how-to/`
@@ -20,7 +19,7 @@ Add a new How To.
 #### Request Body
 * **authorID** – required: `true`, must be a valid userID
 * **tags** – required: `false`
-* **title** – required: `true`, unique: `false`
+* **title** – required: `false`, unique: `false`
 
 #### Response
 * **201** – Successful How To creation

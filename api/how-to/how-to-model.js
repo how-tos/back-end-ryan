@@ -1,23 +1,19 @@
 const mongoose = require('mongoose');
 
-const stepSchema = mongoose.Schema({
-  text: String,
-  image: String,
-  title: { type: String, trim: true }
-});
+const StepsSchema = require('../steps/steps-model').StepsSchema;
 
-const howToSchema = mongoose.Schema({
+const HowToSchema = mongoose.Schema({
   // mongoose automatically adds the `_id` field
   author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   created: Date,
   favoriteCount: { type: Number, default: 0 },
   image: String,
-  steps: [stepSchema],
+  steps: [StepsSchema],
   tags: [String],
-  title: { type: String, required: true }
+  title: String
 });
 
-const HowTo = mongoose.model('HowTo', howToSchema, 'howtos');
+const HowTo = mongoose.model('HowTo', HowToSchema, 'howtos');
 
 //
 // *** DATABASE HELPER FUNCTIONS *** //
