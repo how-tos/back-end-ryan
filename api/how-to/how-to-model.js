@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 
 const stepSchema = mongoose.Schema({
-  text: { type: String, required: true },
+  text: String,
   image: String,
-  title: { type: String, required: true, trim: true }
+  title: { type: String, trim: true }
 });
 
 const howToSchema = mongoose.Schema({
@@ -11,6 +11,7 @@ const howToSchema = mongoose.Schema({
   author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   created: Date,
   favoriteCount: { type: Number, default: 0 },
+  image: String,
   steps: [stepSchema],
   tags: [String],
   title: { type: String, required: true }
@@ -107,5 +108,3 @@ async function favoriteHowTo(userID, howToID, isFavorite) {
     }
   });
 }
-
-// CRUD for steps, too
