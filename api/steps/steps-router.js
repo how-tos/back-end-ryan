@@ -58,7 +58,6 @@ router.post('/', (req, res) => {
 router.get('/', (req, res) => {
   Steps.getSteps(req.params.howToId)
     .then(list => {
-      console.log('steps list: ', list);
       res.status(200).json(list);
     })
     .catch(error => {
@@ -102,7 +101,6 @@ router.put('/:stepId', (req, res) => {
     .then(savedStep => {
       if (!savedStep) return res.status(404).json({message: 'No record found for `stepID.'})
       res.status(200).json(savedStep)})
-    // @TODO – update error handling below for 404
     .catch(error => {
       if (error.name === 'CastError') {
         return res.status(404).json({ message: 'No record found for `howToID.' });
