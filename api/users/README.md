@@ -14,10 +14,24 @@ N/A
   * Array of User objects
 * **401** – Unauthorized
 
-### Edit User – `PUT /api/users/:id`
+### Get User by ID – `GET /api/users/:userId`
+Request a specific user document.
+
+The `/:userId` in the URL refers to the `id` of the User being requested.
+For example: `/api/user/5cb796bf888e2408e065b4b2`
+
+#### Request Body
+N/A
+
+#### Reponse
+* **200** – Successful request
+  * Response includes the User document
+* **404** – Invalid `userID`
+
+### Edit User – `PUT /api/users/:userId`
 Edit a User. As of this writing, any authorized request can edit **any** user.
 
-The `/:id` in the URL refers to the `id` of the user being edited.
+The `/:userId` in the URL refers to the `id` of the user being edited.
 For example: `/api/users/:5cb5kc4653f1a305517a6745`
 
 #### Request Body
