@@ -32,6 +32,7 @@ Log into the backend.
 #### Response
 * **200** – Successful login
   * **message** – A nice welcome message. D'aww.
+  * **userID** – The `_id` of the logged-in user
   * **token** – Token should be saved to the client, typically in `local storage`. Includ the token in the header of requests that require authorization. With `axios`, this can be done like so:
   ```js
   import axios from 'axios';
