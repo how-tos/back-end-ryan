@@ -83,7 +83,8 @@ router.post('/login', (req, res) => {
         const token = generateToken(userDoc);
         return res.status(200).json({
           message: `Welcome, ${userDoc.name.first} ${userDoc.name.last}!`,
-          token: token
+          token: token,
+          userID: userDoc._id
         });
       } else {
         return res.status(401).json({ message: 'Invalid Credentials' });
