@@ -1,6 +1,7 @@
 const router = require('express').Router();
 
 const HowTos = require('./how-to-model');
+const stepsRouter = require('../steps/steps-router');
 
 const handleServerError = require('../api-actions').handleServerError;
 
@@ -43,8 +44,8 @@ router.get('/', (req, res) => {
     .catch(error => handleServerError(error, res));
 });
 
-router.get('/:id', (req, res) => {
-  HowTos.getHowToByID(req.params.id)
+router.get('/:howToId', (req, res) => {
+  HowTos.getHowToByID(req.params.howToId)
     .then(item => res.status(200).json(item))
     .catch(error => {
       if (error.name === 'CastError') {
@@ -55,7 +56,7 @@ router.get('/:id', (req, res) => {
     });
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:howToId', (req, res) => {
   for (let key of Object.keys(req.body)) {
     if (!['authorID', 'tags', 'title'].includes(key)) {
       return res.status(400).json({
@@ -77,7 +78,7 @@ router.put('/:id', (req, res) => {
       });
     }
   }
-  HowTos.editHowTo(req.params.id, req.body)
+  HowTos.editHowTo(req.params.howToId, req.body)
     .then(updatedHowTo => res.status(200).json(updatedHowTo))
     .catch(error => {
       if (error.name === 'CastError') {
@@ -90,8 +91,8 @@ router.put('/:id', (req, res) => {
     });
 });
 
-router.delete('/:id', (req, res) => {
-  HowTos.deleteHowto(req.params.id).then(result => {
+router.delete('/:howToId', (req, res) => {
+  HowTos.deleteHowto(req.params.howToId).then(result => {
     if (!result.n) {
       return res.status(404).json({ message: 'No record found.' });
     } else {
@@ -100,7 +101,7 @@ router.delete('/:id', (req, res) => {
   });
 });
 
-router.post('/:id/favorite', (req, res) => {
+router.post('/:howToId/favorite', (req, res) => {
   if (!req.body.hasOwnProperty('isFavorite') || !req.body.userID) {
     return res.status(400).json({
       message: 'Invalid Request',
@@ -123,7 +124,7 @@ router.post('/:id/favorite', (req, res) => {
       ]
     });
   }
-  HowTos.favoriteHowTo(req.body.userID, req.params.id, req.body.isFavorite)
+  HowTos.favoriteHowTo(req.body.userID, req.params.howToId, req.body.isFavorite)
     .then(result => {
       if (result.missing) {
         return result.mising === 'user'
@@ -135,5 +136,8 @@ router.post('/:id/favorite', (req, res) => {
     })
     .catch(error => handleServerError(error, res));
 });
+
+// Forward steps
+router.use('/:howToId/steps', stepsRouter);
 
 module.exports = router;
