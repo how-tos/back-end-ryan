@@ -65,6 +65,18 @@ router.get('/:howToId', (req, res) => {
     });
 });
 
+router.get('/author/:userId', (req, res) => {
+  HowTos.getHowToByFilter({ author: req.params.userId })
+    .then(list => res.status(200).json(list))
+    .catch(error => {
+      if (error.name === 'CastError') {
+        return res.status(404).json({ message: 'No record found.' });
+      } else {
+        return handleServerError(error, res);
+      }
+    });
+});
+
 router.put('/:howToId', (req, res) => {
   for (let key of Object.keys(req.body)) {
     if (!['authorID', 'tags', 'title'].includes(key)) {

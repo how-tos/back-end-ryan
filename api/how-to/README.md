@@ -8,7 +8,7 @@
 * **created** – A `Date` that is automatically entered by the server at the time of the `POST` request
 * **favoriteCount** – A `Number`, automatically updated when requests are made to the **Toggle Favorite** endpoint.
   * Default: 0
-* **steps** – An `Array` of Steps, which are a separate database entity and managed through the `/api/how-to/:id/steps` endpoints
+* **steps** – An `Array` of Steps, which are a separate database entity and managed through the `/api/how-to/:howToId/steps` endpoints
 * **tags** – An `Array` of `String`s
 * **title** – A `String` that is the title of the How To
 
@@ -37,10 +37,10 @@ N/A
 * **200** – Successful query
   * An `Array` of How To `Object`s, returns an empty `Array` if no records in database
 
-### Get How To by ID – `GET /api/how-to/:id`
+### Get How To by ID – `GET /api/how-to/:howToId`
 Retrieve a How To by its ID. This route also populates the `author` field with the actual `user` record, rather than the user's ID.
 
-The `/:id` in the URL refers to the `id` of the How To being requested.
+The `/:howToId` in the URL refers to the `id` of the How To being requested.
 For example: `/api/how-to/5cb796bf888e2408e065b4b2`
 
 #### Request Body
@@ -51,10 +51,24 @@ N/A
   * A How To `Object`, with the `author` field populated by the corresponding `user` `Object` instead of just the user ID
 * **404** – Invalid How To `_id`
 
-### Edit How To – `PUT /api/how-to/:id`
+### Get How To by Author – `GET /api/how-to/author/:userId`
+Retrieve a list of How Tos authored by a user.
+
+The `/:userId` in the URL refers to the `id` of the How To being requested.
+For example: `/api/how-to/author/5cb7772be50f7f07a1626ed3`
+
+#### Request Body
+N/A
+
+#### Response
+* **200** – Successful query
+  * Response body includes an `Array` of How To `Object`s
+* **404** – Invalid `userID`
+
+### Edit How To – `PUT /api/how-to/:howToId`
 Edit an existing How To.
 
-The `/:id` in the URL refers to the `id` of the How To being edited.
+The `/:howToId` in the URL refers to the `id` of the How To being edited.
 For example: `/api/how-to/5cb796bf888e2408e065b4b2`
 
 #### Request Body
@@ -72,10 +86,10 @@ If there are some other fields you'd like to be able to edit, please just let me
 * **400** – Invalid request
 * **404** – Invalid How To `_id` or invalid `userID`
 
-### Delete How To – `DELETE /api/how-to/:id`
+### Delete How To – `DELETE /api/how-to/:howToId`
 Delete a How To.
 
-The `/:id` in the URL refers to the `id` of the How To being deleted.
+The `/:howToId` in the URL refers to the `id` of the How To being deleted.
 For example: `/api/how-to/5cb796bf888e2408e065b4b2`
 
 This action cannot be undone.
@@ -87,10 +101,10 @@ N/A
 * **204** – Successful delete, no response body sent
 * **404** – No record found for `/:id`
 
-### Toggle Favorite – `POST /api/how-to/:id/favorite`
+### Toggle Favorite – `POST /api/how-to/:howToId/favorite`
 Toggle the favorite status for a user and How To.
 
-The `/:id` in the URL refers to the `id` of the How To being deleted.
+The `/:howToId` in the URL refers to the `id` of the How To being deleted.
 For example: `/api/how-to/5cb796bf888e2408e065b4b2/favorite`
 
 #### Request Body
