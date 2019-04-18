@@ -16,7 +16,7 @@ For example: `/api/how-to/5cb796bf888e2408e065b4b2/steps`
 
 #### Request Body
 * **image** – required: `false`, image URL – will figure out how to do this automatically with file uploading
-* **text** – required: `true`
+* **text** – required: `false`
 * **title** – required: `true`, unique: `false`
 
 #### Response

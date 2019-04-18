@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const StepsSchema = mongoose.Schema({
   image: String,
   howTo: { type: mongoose.Schema.Types.ObjectId, ref: 'HowTo', required: true },
-  text: { type: String, required: true },
+  text: String,
   title: { type: String, required: true }
 });
 
