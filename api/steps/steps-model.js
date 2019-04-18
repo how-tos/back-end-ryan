@@ -1,13 +1,12 @@
 const mongoose = require('mongoose');
 
-const StepsSchema = mongoose.Schema({
-  image: String,
-  howTo: { type: mongoose.Schema.Types.ObjectId, ref: 'HowTo', required: true },
-  text: String,
-  title: { type: String, required: true }
-});
+// const StepsSchema = mongoose.Schema({
+//   image: String,
+//   text: String,
+//   title: { type: String, required: true }
+// });
 
-const Steps = mongoose.model('Steps', StepsSchema, 'steps');
+// const Steps = mongoose.model('Steps', StepsSchema, 'steps');
 
 //
 // *** DATABASE HELPER FUNCTIONS *** //
@@ -19,7 +18,7 @@ module.exports = {
   addStep,
   editStep,
   deleteStep,
-  getSteps
+  getSteps,
   // getStepByID
 };
 

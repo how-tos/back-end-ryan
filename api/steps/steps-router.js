@@ -43,7 +43,6 @@ router.post('/', (req, res) => {
 
   Steps.addStep(req.params.howToId, newStep)
     .then(savedStep => {
-      console.log('savedStep: ', savedStep);
       res.status(201).json(savedStep);
     })
     .catch(error => {

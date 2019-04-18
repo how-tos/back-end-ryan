@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
-const StepsSchema = require('../steps/steps-model').StepsSchema;
+const StepsSchema = mongoose.Schema({
+  text: String,
+  image: String,
+  title: { type: String, trim: true }
+});
 
 const HowToSchema = mongoose.Schema({
   // mongoose automatically adds the `_id` field
@@ -27,7 +31,8 @@ module.exports = {
   editHowTo,
   favoriteHowTo,
   getHowToByFilter,
-  getHowToByID
+  getHowToByID,
+  HowTo
 };
 
 function addHowTo(howTo) {
