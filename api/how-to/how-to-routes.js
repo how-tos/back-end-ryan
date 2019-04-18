@@ -1,7 +1,7 @@
 const router = require('express').Router();
 
 const HowTos = require('./how-to-model');
-const imagesRouter = require('../images/images-router');
+// const imagesRouter = require('../images/images-router');
 const stepsRouter = require('../steps/steps-router');
 
 const handleServerError = require('../api-actions').handleServerError;
@@ -149,7 +149,7 @@ router.post('/:howToId/favorite', (req, res) => {
 });
 
 // Forward images
-router.use('/:howToId/image', imagesRouter);
+// router.use('/:howToId/image', imagesRouter);
 // Forward steps
 router.use('/:howToId/steps', stepsRouter);
 
