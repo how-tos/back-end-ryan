@@ -10,13 +10,13 @@ const howToSchema = mongoose.Schema({
   // mongoose automatically adds the `_id` field
   author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   created: Date,
-  favoriteCount: { type: Number, default: 0,  },
+  favoriteCount: { type: Number, default: 0 },
   steps: [stepSchema],
   tags: [String],
   title: { type: String, required: true }
 });
 
-const HowTo = mongoose.model('howto', howToSchema);
+const HowTo = mongoose.model('HowTo', howToSchema, 'howtos');
 
 //
 // *** DATABASE HELPER FUNCTIONS *** //
@@ -60,8 +60,10 @@ function getHowToByFilter(filter) {
   return HowTo.find(filter);
 }
 
-function getHowToByID(id) {
-  return HowTo.findById(id).populate('author');
+function getHowToByID(id, populateAuthor = true) {
+  return populateAuthor
+    ? HowTo.findById(id).populate('author')
+    : HowTo.findById(id);
 }
 
 async function favoriteHowTo(userID, howToID, isFavorite) {
@@ -69,10 +71,10 @@ async function favoriteHowTo(userID, howToID, isFavorite) {
     try {
       const howTo = await HowTo.findById(howToID);
       if (!howTo) resolve({ missing: 'how to', code: 404 });
-      
+
       const userToggle = await toggleUserFavorite(userID, howToID, isFavorite);
       if (!userToggle) resolve({ missing: 'user', code: 404 });
-      
+
       switch (userToggle.favoriteChange) {
         case 'added':
           console.log('case added');
