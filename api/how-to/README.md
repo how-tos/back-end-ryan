@@ -42,7 +42,7 @@ N/A
 Retrieve a How To by its ID. This route also populates the `author` field with the actual `user` record, rather than the user's ID.
 
 The `/:id` in the URL refers to the `id` of the How To being requested.
-For example: `/api/how-to/:5cb796bf888e2408e065b4b2`
+For example: `/api/how-to/5cb796bf888e2408e065b4b2`
 
 #### Request Body
 N/A
@@ -56,7 +56,7 @@ N/A
 Edit an existing How To.
 
 The `/:id` in the URL refers to the `id` of the How To being edited.
-For example: `/api/how-to/:5cb796bf888e2408e065b4b2`
+For example: `/api/how-to/5cb796bf888e2408e065b4b2`
 
 #### Request Body
 * **authorID** – Required: `false`
@@ -77,7 +77,7 @@ If there are some other fields you'd like to be able to edit, please just let me
 Delete a How To.
 
 The `/:id` in the URL refers to the `id` of the How To being deleted.
-For example: `/api/how-to/:5cb796bf888e2408e065b4b2`
+For example: `/api/how-to/5cb796bf888e2408e065b4b2`
 
 This action cannot be undone.
 
@@ -92,7 +92,7 @@ N/A
 Toggle the favorite status for a user and How To.
 
 The `/:id` in the URL refers to the `id` of the How To being deleted.
-For example: `/api/how-to/:5cb796bf888e2408e065b4b2/favorite`
+For example: `/api/how-to/5cb796bf888e2408e065b4b2/favorite`
 
 #### Request Body
 * **isFavorite** – Required: `true`
