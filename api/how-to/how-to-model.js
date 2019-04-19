@@ -64,7 +64,7 @@ function getHowToByFilter(filter) {
 
 function getHowToByID(id, populateAuthor = true) {
   return populateAuthor
-    ? HowTo.findById(id).populate('author')
+    ? HowTo.findById(id).populate('author', '-passHash')
     : HowTo.findById(id);
 }
 
