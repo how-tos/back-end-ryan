@@ -1,7 +1,6 @@
 const router = require('express').Router();
 
 const HowTos = require('./how-to-model');
-// const imagesRouter = require('../images/images-router');
 const stepsRouter = require('../steps/steps-router');
 
 const handleServerError = require('../api-actions').handleServerError;
@@ -160,8 +159,45 @@ router.post('/:howToId/favorite', (req, res) => {
     .catch(error => handleServerError(error, res));
 });
 
-// Forward images
-// router.use('/:howToId/image', imagesRouter);
+router.put('/:howToId/image', (req, res) => {
+  // Handle Invalid Request
+  if (!req.body.image) {
+    return res.status(400).json({
+      message: 'Invalid Request',
+      example: {
+        image: 'https://cloudinary.com/example.jpg'
+      },
+      requestProperties: [
+        {
+          propertyName: 'howToID',
+          location: '/api/how-to/:howToId/image',
+          required: true
+        },
+        {
+          propertyName: 'image',
+          location: 'request body',
+          required: true
+        }
+      ]
+    });
+  }
+
+  // Handle Valid Request
+  HowTos.getHowToByID(req.params.howToId)
+    .then(howTo => {
+      howTo.image = req.body.image;
+      return howTo.save();
+    })
+    .then(savedHowTo => res.status(200).json(savedHowTo))
+    .catch(error => {
+      if (error.name === 'CastError') {
+        return res.status(404).json({ message: 'No record found.' });
+      } else {
+        return handleServerError(error, res);
+      }
+    });
+});
+
 // Forward steps
 router.use('/:howToId/steps', stepsRouter);
 

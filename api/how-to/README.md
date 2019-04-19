@@ -99,12 +99,12 @@ N/A
 
 #### Response
 * **204** – Successful delete, no response body sent
-* **404** – No record found for `/:id`
+* **404** – No record found for `/:howToId`
 
 ### Toggle Favorite – `POST /api/how-to/:howToId/favorite`
 Toggle the favorite status for a user and How To.
 
-The `/:howToId` in the URL refers to the `id` of the How To being deleted.
+The `/:howToId` in the URL refers to the `id` of the How To being favorited.
 For example: `/api/how-to/5cb796bf888e2408e065b4b2/favorite`
 
 #### Request Body
@@ -120,3 +120,21 @@ For example: `/api/how-to/5cb796bf888e2408e065b4b2/favorite`
     * **removed** – How To was unfavorited
     * **null** – No change because the request `isFavorite` already matched database
   * **favoriteCount** – New total after changes
+* **400** – Invalid request
+* **404** – No record found for `/:howToId`
+
+### Edit How To Image – `PUT /api/how-to/:howToId/image`
+Edit the `image` property of the How To.
+
+The `/:howToId` in the URL refers to the `id` of the How To being edited.
+For example: `/api/how-to/5cb796bf888e2408e065b4b2/image`
+
+#### Request Body
+* **image** – Required: `true`
+  * The image URL
+
+#### Response
+* **200** – The How To was successfully edited
+  * Response includes the updated How To record
+* **400** – Invalid request
+* **404** – No record found for `/:howToId`
